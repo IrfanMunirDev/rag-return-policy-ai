@@ -46,6 +46,10 @@ If you’d like to contribute, please open an issue first to discuss the change 
 
 ---
 
+## Ollama
+I've updated appsettings.json for Ollama, and we can  use OpenAI API as well as free models too. You can run the app with Ollama by following these steps:
+`ollama run phi4-mini`
+
 ## 📜 License
 
 This project is licensed under the **MIT License**.
