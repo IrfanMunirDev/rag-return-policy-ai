@@ -50,6 +50,18 @@ If you’d like to contribute, please open an issue first to discuss the change 
 I've updated appsettings.json for Ollama, and we can  use OpenAI API as well as free models too. You can run the app with Ollama by following these steps:
 `ollama run phi4-mini`
 
+
+## How To Run
+`
+in post man or post request send tool of your choice,  add following 
+post: https://localhost:7284/api/policy/ask
+
+body: {
+    "question": "Can I return an opened product?"
+}
+update the port if needed.
+`
+
 ## 📜 License
 
 This project is licensed under the **MIT License**.

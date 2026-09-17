@@ -2,12 +2,12 @@
 
 namespace ReturnPolicy.Services;
 
-public class PolicyService
+public class PolicyRagPromptStuffingService
 {
     private readonly IChatClient _chatClient;
     private readonly string _policyPath;
 
-    public PolicyService(IChatClient chatClient)
+    public PolicyRagPromptStuffingService(IChatClient chatClient)
     {
         _chatClient = chatClient;
         _policyPath = Path.Combine(Directory.GetCurrentDirectory(), "Data", "return_policy.txt");
@@ -20,6 +20,7 @@ public class PolicyService
 
         var policyText = await File.ReadAllTextAsync(_policyPath);
 
+        //we are stuffing the prompt with the data {policyText} we have so we are enhancing the user prompt here, and not using embeddings
         List<ChatMessage> messages = new()
         {
             new ChatMessage(ChatRole.System, "You are a helpful customer support assistant specializing in return policies."),
