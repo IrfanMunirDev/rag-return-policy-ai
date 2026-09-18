@@ -9,4 +9,9 @@
   <ItemGroup>
     <ProjectReference Include="..\ReturnPolicy.Services\ReturnPolicy.Services.csproj" />
   </ItemGroup>
+<ItemGroup>
+	<None Update="Data\return_policy.txt">
+		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
+</ItemGroup>
 </Project>
