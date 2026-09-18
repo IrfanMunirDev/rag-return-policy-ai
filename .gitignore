@@ -55,3 +55,11 @@ nunit-*.xml
 
 # VS
 .vs
+
+# SQLite Database and Journal Files
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
