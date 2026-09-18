@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.AI;
+using Microsoft.Extensions.Logging;
 using ReturnPolicy.Infrastructure.Data;
 using ReturnPolicy.Infrastructure.Entities;
 
@@ -13,18 +14,21 @@ public class PolicyRagEmbeddingService
     private readonly VectorSearchService _vectorSearch;
     private readonly PolicyDbContext _dbContext;
     private readonly string _policyPath;
+    private readonly ILogger<PolicyRagEmbeddingService> _logger;
 
     public PolicyRagEmbeddingService(IChatClient chatClient,
                                      IEmbeddingGenerator<string, Embedding<float>> embeddingGenerator,
                                      PolicyChunker chunker,
                                      VectorSearchService vectorSearch,
-                                     PolicyDbContext dbContext)
+                                     PolicyDbContext dbContext,
+                                     ILogger<PolicyRagEmbeddingService> logger)
     {
         _chatClient = chatClient;
         _embeddingGenerator = embeddingGenerator;
         _chunker = chunker;
         _vectorSearch = vectorSearch;
         _dbContext = dbContext;
+        _logger = logger;
 
         // Use AppContext.BaseDirectory to safely locate the Data folder across any project type
         var baseDir = AppContext.BaseDirectory;
@@ -35,7 +39,7 @@ public class PolicyRagEmbeddingService
             Directory.CreateDirectory(dataDir);
         }
 
-        _policyPath = Path.Combine(dataDir, "return_policy.txt");
+        _policyPath = Path.Combine(dataDir, "return_policy.txt");       
     }
 
     private async Task EnsurePolicyLoadedAsync()
@@ -43,10 +47,17 @@ public class PolicyRagEmbeddingService
         // Ensure EF Core database and tables are created
         await _dbContext.Database.EnsureCreatedAsync();
 
-        // If chunks already exist in SQLite, skip seeding
-        if (await _dbContext.PolicyChunks.AnyAsync()) return;
+        if (!File.Exists(_policyPath))
+        {
+            throw new InvalidOperationException($"Policy file not found: {_policyPath}");
+        }
 
-        if (!File.Exists(_policyPath)) return;
+        // If chunks already exist in SQLite, skip seeding
+        if (await _dbContext.PolicyChunks.AnyAsync())
+        {            
+            _logger.LogInformation("Policy chunks already exist in the database. Skipping seeding.");
+            return;
+        }
 
         var policyText = await File.ReadAllTextAsync(_policyPath);
         var chunks = _chunker.ChunkText(policyText, maxChunkLength: 400);
