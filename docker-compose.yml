@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  rag-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: rag-return-policy-api:latest
+    container_name: rag-return-policy-api
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - Ollama__Endpoint=http://host.docker.internal:11434/v1/
+      - Ollama__ChatModel=phi4-mini
+      - Ollama__EmbedModel=nomic-embed-text
+      - ConnectionStrings__DefaultConnection=Data Source=Data/policy.db
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      # Mounts your local ReturnPolicy/Data folder into the container.
+      # This ensures the container instantly finds your return_policy.txt 
+      # and saves policy.db safely onto your host machine (where it's ignored by Git).
+      - ./ReturnPolicy/Data:/app/Data
