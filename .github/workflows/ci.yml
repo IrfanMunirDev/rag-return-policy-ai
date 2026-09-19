@@ -1,4 +1,4 @@
-name: CI
+name: CI/CD Local Deployment
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  build-and-test:
+  build-test-and-deploy:
     runs-on: [self-hosted, windows, x64]
 
     steps:
@@ -19,11 +19,32 @@ jobs:
       - name: Show .NET version
         run: dotnet --version
 
-      - name: Restore
+      - name: Restore Solution
         run: dotnet restore RAGReturnPolicy.sln
 
-      - name: Build
+      - name: Build Solution
         run: dotnet build RAGReturnPolicy.sln --no-restore --configuration Release
 
-      - name: Test
+      - name: Run Unit Tests
         run: dotnet test RAGReturnPolicy.sln --no-build --configuration Release
+
+      - name: Build Docker Image
+        run: docker build -t stage-dev-rag-retun-policy:latest .
+
+      - name: Stop Old Container
+        run: |
+          docker stop stage-dev-rag-retun-policy || true
+          docker rm stage-dev-rag-retun-policy || true
+
+      - name: Run New Local Container
+        env:
+          # Optional secrets if you use them, or placeholders
+          MY_SECURE_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OLLAMA_HOST_ENDPOINT: "http://host.docker.internal:11434/v1/"
+        run: |
+          docker run -d `
+            --name stage-dev-rag-retun-policy `
+            -p 8080:8080 `
+            -e Ollama__Endpoint="$env:OLLAMA_HOST_ENDPOINT" `
+            -e OpenAI__ApiKey="$env:MY_SECURE_API_KEY" `
+            stage-dev-rag-retun-policy:latest
