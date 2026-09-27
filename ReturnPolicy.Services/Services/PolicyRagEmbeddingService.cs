@@ -3,6 +3,7 @@ using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Logging;
 using ReturnPolicy.Infrastructure.Data;
 using ReturnPolicy.Infrastructure.Entities;
+using System.Runtime.CompilerServices;
 
 namespace ReturnPolicy.Services;
 
@@ -104,6 +105,44 @@ public class PolicyRagEmbeddingService
         ]);
 
         return response.Text ?? "No response generated.";
+    }
+
+    public async IAsyncEnumerable<string> AnswerQuestionStreamAsync(string userQuestion,
+                                                                   [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        await EnsurePolicyLoadedAsync();
+
+        // 1. Convert user's question into a query vector using Ollama
+        var queryEmbedding = await _embeddingGenerator.GenerateAsync(userQuestion, cancellationToken: cancellationToken);
+        var queryVector = queryEmbedding.Vector;
+
+        // 2. Load stored vectors from EF Core database
+        var entities = await _dbContext.PolicyChunks.ToListAsync(cancellationToken);
+        var storedEmbeddings = entities
+            .Select(e => new ChunkEmbedding(e.Text, BytesToFloatArray(e.Embedding)))
+            .ToList();
+
+        // 3. Find the most relevant chunk using vector search
+        var relevantChunk = _vectorSearch.FindMostRelevantChunk(queryVector, storedEmbeddings);
+
+        // 4. Formulate prompt for local phi4-mini model
+        var systemPrompt = "You are a helpful customer service assistant. Answer accurately using ONLY the provided context snippet below. If unknown, state that you don't know.";
+        var userPrompt = $"Context: {relevantChunk}\n\nQuestion: {userQuestion}";
+
+        var messages = new List<ChatMessage>
+        {
+            new ChatMessage(ChatRole.System, systemPrompt),
+            new ChatMessage(ChatRole.User, userPrompt)
+        };
+
+        // 5. Stream tokens in real-time using Microsoft.Extensions.AI
+        await foreach (var update in _chatClient.GetStreamingResponseAsync(messages, cancellationToken: cancellationToken))
+        {
+            if (!string.IsNullOrEmpty(update.Text))
+            {
+                yield return update.Text;
+            }
+        }
     }
 
     private static byte[] FloatArrayToBytes(float[] array)
