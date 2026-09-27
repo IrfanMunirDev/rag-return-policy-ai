@@ -145,11 +145,17 @@ docker compose up --build
 Send a `POST` request using Postman or your preferred HTTP client:
 
 * **Prompt Stuffing Endpoint:**
-
 `use https if needed, we are using local deployed version in docker, and certificates are not installed in docker so using the http`
 `POST http://localhost:8080/api/PolicyRagPromptStuffing/ask`
 * **RAG Embedding Endpoint:**
 `POST http://localhost:8080/api/PolicyRagEmbedding/ask`
+* **RAG Embedding Streaming Endpoint:**
+`POST http://localhost:8080/api/PolicyRagEmbedding/stream`
+```
+   // implement streaming usinig FlushAsync() so user will keep get generated words instantly
+    await Response.WriteAsync(token, cancellationToken);
+    await Response.Body.FlushAsync(cancellationToken);
+```
 
 **Request Body (JSON):**
 
