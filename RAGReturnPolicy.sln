@@ -21,6 +21,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{B5
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReturnPolicy.Services", "ReturnPolicy.Services\ReturnPolicy.Services.csproj", "{FEFC8645-D6C0-499D-B28F-EB50D6C9FCA1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ragAngularApp", "ragAngularApp", "{022CB4D2-C7F1-49D5-9173-E4D10E85ABC3}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "ragAngularApp", "..\ragAngularApp\ragAngularApp.esproj", "{E6DAFF19-0D79-75E4-5C81-287773E2A51C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +51,12 @@ Global
 		{FEFC8645-D6C0-499D-B28F-EB50D6C9FCA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FEFC8645-D6C0-499D-B28F-EB50D6C9FCA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FEFC8645-D6C0-499D-B28F-EB50D6C9FCA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6DAFF19-0D79-75E4-5C81-287773E2A51C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6DAFF19-0D79-75E4-5C81-287773E2A51C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6DAFF19-0D79-75E4-5C81-287773E2A51C}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{E6DAFF19-0D79-75E4-5C81-287773E2A51C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6DAFF19-0D79-75E4-5C81-287773E2A51C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6DAFF19-0D79-75E4-5C81-287773E2A51C}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -57,6 +67,7 @@ Global
 		{7B223C44-69E0-4A66-B19E-9D3837B7C82F} = {B768775C-736B-4232-AF0A-89C62A8388A5}
 		{4F2259A8-D1E4-4F8A-B536-B5F9B059AD6A} = {6EE21EA2-76D8-4476-AEA8-6408466E273F}
 		{FEFC8645-D6C0-499D-B28F-EB50D6C9FCA1} = {B5B162D4-A682-4BC1-BED7-5B679DFCA08C}
+		{E6DAFF19-0D79-75E4-5C81-287773E2A51C} = {022CB4D2-C7F1-49D5-9173-E4D10E85ABC3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {634B8E47-40FF-403D-BE59-99C027BAA039}

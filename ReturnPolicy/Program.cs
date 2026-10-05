@@ -10,6 +10,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular", policy =>
+    {
+        policy.WithOrigins("http://localhost:23734", "http://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 // Register Global Exception Handler
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
@@ -49,8 +59,17 @@ builder.Services.AddScoped<PolicyRagPromptStuffingService>();
 builder.Services.AddScoped<PolicyRagEmbeddingService>();
 
 var app = builder.Build();
+// AUTO-CREATE DATABASE & TABLES ON STARTUP
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<PolicyDbContext>();
+
+    // Ensures directory exists and builds all tables defined in PolicyDbContext
+    dbContext.Database.EnsureCreated();
+}
 app.UseExceptionHandler();
 
+app.UseCors("AllowAngular");
 app.UseStaticFiles();
 app.MapControllers();
 
