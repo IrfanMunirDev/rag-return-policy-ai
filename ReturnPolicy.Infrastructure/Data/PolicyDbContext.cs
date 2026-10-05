@@ -7,6 +7,8 @@ public class PolicyDbContext : DbContext
 {
     public DbSet<PolicyChunkEntity> PolicyChunks => Set<PolicyChunkEntity>();
 
+    public DbSet<User> Users => Set<User>();
+
     public PolicyDbContext(DbContextOptions<PolicyDbContext> options) : base(options)
     {
     }
@@ -18,6 +20,13 @@ public class PolicyDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Text).IsRequired();
             entity.Property(e => e.Embedding).IsRequired();
+        });
+
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Username).IsRequired();
+            entity.Property(e => e.PasswordHash).IsRequired();
         });
     }
 }
